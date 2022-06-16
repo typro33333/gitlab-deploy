@@ -1,0 +1,46 @@
+version: '3.6'
+services:
+  web:
+    image: 'gitlab/gitlab-ee:latest'  #or gitlab-ce
+    restart: always
+    hostname: '${EXTERNAL_URL}'
+    container_name: gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://${EXTERNAL_URL}'
+        gitlab_rails['initial_root_password']='${ROOT_PASSWORD}'
+        gitlab_rails['gitlab_shell_ssh_port']=${PORT_SSH}
+      ## Config manual ssl for gitlab in container
+      # nginx['redirect_http_to_https'] = true
+      # nginx['ssl_certificate'] = "/etc/gitlab/ssl/fullchain.pem"
+      # nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/privkey.pem"
+      # nginx['ssl_dhparam'] = "/etc/gitlab/ssl/dhparams.pem"
+    ports:
+      - '${PORT_WEBPAGE}:80'
+      - '${PORT_EXECUTE}:443'
+      - '${PORT_SSH}:22'
+    volumes:
+      - '$GITLAB_HOME/config:/etc/gitlab'
+      - '$GITLAB_HOME/logs:/var/log/gitlab'
+      - '$GITLAB_HOME/data:/var/opt/gitlab'
+      ## Config manual ssl for gitlab in container
+      # - '${GITLAB_HOME}/config/ssl:/etc/gitlab/ssl'
+    networks:
+      - gitlab
+    env_file:
+      - .env
+  # CI/CD
+  # gitlab-runner:
+  #   image: gitlab/gitlab-runner:alpine
+  #   container_name: gitlab-runner
+  #   restart: always
+  #   depends_on:
+  #     - web
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #     - '$GITLAB_HOME/gitlab-runner:/etc/gitlab-runner'
+  #   networks:
+  #     - gitlab
+networks:
+  gitlab:
+    name: gitlab-network
