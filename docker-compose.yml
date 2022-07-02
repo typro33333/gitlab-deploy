@@ -1,25 +1,26 @@
 version: '3.6'
 services:
   web:
-    image: 'gitlab/gitlab-ee:latest'  #or gitlab-ce
+    image: 'gitlab/gitlab-ee:latest'  # or gitlab-ce
     restart: always
-    hostname: '${EXTERNAL_URL}'
-    container_name: gitlab
+    hostname: '${EXTERNAL_URL}' # Make sure your domain has point to your ip_public
+    container_name: gitlab # Can replace another name
     environment:
       GITLAB_OMNIBUS_CONFIG: |
         external_url 'http://${EXTERNAL_URL}'
         gitlab_rails['initial_root_password']='${ROOT_PASSWORD}'
         gitlab_rails['gitlab_shell_ssh_port']=${PORT_SSH}
-      ## Config manual ssl for gitlab in container
+      ### Config manual ssl for gitlab in container
       # nginx['redirect_http_to_https'] = true
       # nginx['ssl_certificate'] = "/etc/gitlab/ssl/fullchain.pem"
       # nginx['ssl_certificate_key'] = "/etc/gitlab/ssl/privkey.pem"
       # nginx['ssl_dhparam'] = "/etc/gitlab/ssl/dhparams.pem"
     ports:
-      - '${PORT_WEBPAGE}:80'
-      - '${PORT_EXECUTE}:443'
-      - '${PORT_SSH}:22'
+      - '${PORT_WEBPAGE}:80' #bind port 80
+      - '${PORT_EXECUTE}:443' #bind port 443
+      - '${PORT_SSH}:22' #bind port 22
     volumes:
+    # Varible GITLAB_HOME will generate from startup.sh and it will get current directory
       - '$GITLAB_HOME/config:/etc/gitlab'
       - '$GITLAB_HOME/logs:/var/log/gitlab'
       - '$GITLAB_HOME/data:/var/opt/gitlab'

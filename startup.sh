@@ -28,6 +28,9 @@ echo "Found exits folder gitlab now start replace data and copy to container doc
 ## Config SSL for gitlab manual
 #################################
 
+#################################
+## Ubuntu
+#################################
 # Install package
 # if [[ ! "$OSTYPE" == "darwin"* ]];then
 #  apt install certbot openssl
@@ -50,8 +53,9 @@ echo "Found exits folder gitlab now start replace data and copy to container doc
 
 # Run docker
 docker-compose up -d
-echo -e "${GREEN}Docker compose run gitlab complete! Wait 2 minnute for the starting gitlab config${ENDCOLOR}"
+echo -e "${GREEN}Docker compose run gitlab complete! Wait a minnute for the starting gitlab config${ENDCOLOR}"
 
+###############################
 # Export password root account
 # echo "User: root"
 # echo "Password: ${ROOT_PASSWORD}"
